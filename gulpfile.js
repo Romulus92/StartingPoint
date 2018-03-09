@@ -22,34 +22,34 @@ const spritesmith = require('gulp.spritesmith');
 const svgSprite = require('gulp-svg-sprite');
 
 const paths = {
-    root: './build',
+    root: './docs',
     templates: {
         pages: 'src/templates/pages/*.pug',
         src: 'src/templates/**/*.pug'
     },
     styles: {
         src: 'src/styles/**/*.scss',
-        dest: 'build/assets/styles/'
+        dest: 'docs/assets/styles/'
     },
     images: {
         src: 'src/images/**/*.*',
-        dest: 'build/assets/images/'
+        dest: 'docs/assets/images/'
     },
-    // scripts: {
-    // src: 'src/scripts/**/*.js',
-    // dest: 'build/assets/scripts/'
-    // }, 
+    scripts: {
+        src: 'src/scripts/**/*.js',
+        dest: 'docs/assets/scripts/'
+    },
     fonts: {
         src: 'src/webfonts/**/*.*',
-        dest: 'build/assets/webfonts'
+        dest: 'docs/assets/webfonts'
     },
     sprite: {
         src: 'src/sprites/**/*.png',
-        dest: 'build/assets/sprites'
+        dest: 'docs/assets/sprites'
     },
     svgsprite: {
         src: 'src/svg/*.svg',
-        dest: 'build/assets/svg'
+        dest: 'docs/assets/svg'
     }
 }
 
@@ -79,19 +79,18 @@ function clean() {
     return del(paths.root);
 }
 
-// webpack
-/* function scripts() {
-    return gulp.src('src/scripts/app.js')
-        .pipe(gulpWebpack(webpackConfig, webpack))
+// перенос JS
+function scripts() {
+    return gulp.src('src/scripts/*.js')
         .pipe(gulp.dest(paths.scripts.dest));
-} */
+}
 
 // галповский вотчер
 function watch() {
     gulp.watch(paths.styles.src, styles);
     gulp.watch(paths.templates.src, templates);
     gulp.watch(paths.images.src, images);
-    /* gulp.watch(paths.scripts.src, scripts); */
+    gulp.watch(paths.scripts.src, scripts);
 }
 
 // локальный сервер + livereload (встроенный)
@@ -152,6 +151,6 @@ exports.images = images;
 
 gulp.task('default', gulp.series(
     clean,
-    gulp.parallel(styles, templates, images, sprite, spritessvg, fonts, /* scripts */ ),
+    gulp.parallel(styles, templates, images, sprite, spritessvg, fonts, scripts),
     gulp.parallel(watch, server)
 ));
