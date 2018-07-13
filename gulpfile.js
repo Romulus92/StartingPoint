@@ -16,6 +16,9 @@ const webpackConfig = require('./webpack.config.js'); */
 
 const imagemin = require('gulp-imagemin');
 const pngquant = require('imagemin-pngquant');
+const imageminMozjpeg = require('imagemin-mozjpeg')
+const imageminGifsicle = require('imagemin-gifsicle')
+const imageminOptipng = require('imagemin-optipng')
 const cache = require('gulp-cache');
 
 const spritesmith = require('gulp.spritesmith');
@@ -56,7 +59,9 @@ const paths = {
 // pug
 function templates() {
     return gulp.src(paths.templates.pages)
-        .pipe(pug({ pretty: true }))
+        .pipe(pug({
+            pretty: true
+        }))
         .pipe(gulp.dest(paths.root));
 }
 
@@ -68,9 +73,13 @@ function styles() {
             outputStyle: 'compressed',
             includePaths: require('node-normalize-scss').includePaths
         }))
-        .pipe(autoprefixer(['last 15 versions', '> 1%', 'ie 8', 'ie 7'], { cascade: true }))
+        .pipe(autoprefixer(['last 15 versions', '> 1%', 'ie 8', 'ie 7'], {
+            cascade: true
+        }))
         .pipe(sourcemaps.write())
-        .pipe(rename({ suffix: '.min' }))
+        .pipe(rename({
+            suffix: '.min'
+        }))
         .pipe(gulp.dest(paths.styles.dest))
 }
 
@@ -102,7 +111,7 @@ function server() {
 }
 
 // ужимаем и переносим картинки
-function images() {
+/* function images() {
     return gulp.src(paths.images.src)
         .pipe(cache(imagemin({
             interlaced: true,
@@ -110,6 +119,23 @@ function images() {
             svgoPlugins: [{ removeViewBox: false }],
             use: [pngquant()]
         })))
+        .pipe(gulp.dest(paths.images.dest));
+} */
+
+function images() {
+    return gulp.src(paths.images.src)
+        .pipe(imagemin([
+            imageminMozjpeg({
+                quality: 80
+            }),
+            imageminGifsicle({
+                optimizationLevel: 3,
+                interlaced: true
+            }),
+            imageminOptipng({
+                optimizationLevel: 2,
+            }),
+        ]))
         .pipe(gulp.dest(paths.images.dest));
 }
 
